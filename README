@@ -1,25 +1,23 @@
-# PTSD Trigger Detection System for Meta Glasses
+# PTSD Trigger Detection System
 
-This system helps PTSD patients by monitoring video streams from Meta glasses, detecting potential triggers (specifically car-related objects), and automatically recording brain wave data when triggers are detected.
+This system helps PTSD patients by monitoring screen content in real-time, detecting potential triggers based on user descriptions, and automatically recording the screen when triggers are detected.
 
 ## Overview
 
-The system consists of several components:
+The system uses Google's Gemini AI to analyze screen content in real-time and identify potential PTSD triggers based on the user's specific description. When a trigger is detected, it automatically records the screen content.
 
-1. **Video Analysis Module**: Processes video from Meta glasses to detect cars and other vehicles using Google Cloud Video Intelligence API.
-2. **Transcription Analysis**: Analyzes speech in the video to detect car-related keywords.
-3. **Cursor Integration**: Interfaces with the brain wave recording device at `/Users/wenxin/Desktop/AI/sensor`.
-4. **Streaming Support**: Allows processing of live video streams from Meta glasses using RTSP protocol.
+### Key Features
+
+- **Real-time Screen Monitoring**: Captures and analyzes a specific region of your screen.
+- **AI-Powered Trigger Detection**: Uses Google Gemini to identify PTSD triggers based on your personal description.
+- **Automatic Recording**: Starts recording when triggers are detected and stops after a configurable cooldown period.
+- **Smart Glasses Integration**: Can be used to monitor content from connected Meta glasses through browser or app windows.
 
 ## Requirements
 
 - Python 3.7+
-- Google Cloud account with Video Intelligence API enabled
-- Service account key with permissions for Video Intelligence API
-- Meta glasses with video streaming capability
-- Brain wave recording device at the specified path
-- GStreamer (for streaming version)
-- AIStreamer (for streaming version)
+- Google API Key with access to Gemini API
+- Meta glasses (optional, for monitoring smart glasses feed)
 
 ## Installation
 
@@ -31,82 +29,60 @@ The system consists of several components:
 
 2. Install the required Python packages:
    ```
-   pip install google-cloud-videointelligence google-cloud-storage pyserial
+   pip install -r requirements.txt
    ```
 
-3. Set up your Google Cloud credentials:
+3. Create a `.env` file with your Google API key:
    ```
-   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your-service-account-key.json"
-   ```
-
-4. For streaming support, install GStreamer and build AIStreamer:
-   ```
-   # Install GStreamer (Ubuntu/Debian)
-   sudo apt-get install gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-tools
-
-   # Clone and build AIStreamer
-   git clone https://github.com/google/aistreamer.git
-   cd aistreamer
-   bash build.sh
+   GOOGLE_API_KEY=your_api_key_here
    ```
 
 ## Usage
 
-### Batch Processing Mode
+### Monitoring a Screen Region
 
-Use this mode to analyze a pre-recorded video file:
-
-```
-python main_script.py --video /path/to/video.mp4 --cursor-path /Users/wenxin/Desktop/AI/sensor --output-dir /path/to/output --gcs-bucket my-gcs-bucket
-```
-
-Options:
-- `--video`: Path to video file or GCS URI (required)
-- `--cursor-path`: Path to the brain wave recording device (default: /Users/wenxin/Desktop/AI/sensor)
-- `--output-dir`: Directory to save all output files
-- `--gcs-bucket`: GCS bucket for uploading/processing video
-- `--triggers`: Comma-separated list of trigger objects to detect (default: car,vehicle,truck,automobile,traffic)
-- `--confidence`: Minimum confidence threshold for triggers (default: 0.7)
-- `--duration`: Duration in seconds for each brain wave recording (default: 5)
-
-### Streaming Mode
-
-Use this mode to process live video from Meta glasses:
+The main script monitors a specific region of your screen for PTSD triggers:
 
 ```
-python streaming_version.py --rtsp-url rtsp://meta-glasses-ip:port/stream --cursor-path /Users/wenxin/Desktop/AI/sensor --output-dir /path/to/output
+python mac_window_monitor.py --region x,y,width,height --display
 ```
 
 Options:
-- `--rtsp-url`: RTSP URL of the Meta glasses stream (required)
-- `--cursor-path`: Path to the brain wave recording device (default: /Users/wenxin/Desktop/AI/sensor)
-- `--output-dir`: Directory to save all output files
-- `--pipe-name`: Name of the named pipe for AIStreamer (default: meta_glasses_pipe)
-- `--triggers`: Comma-separated list of trigger objects to detect (default: car,vehicle,truck,automobile,traffic)
-- `--confidence`: Minimum confidence threshold for triggers (default: 0.7)
-- `--duration`: Duration in seconds for each brain wave recording (default: 5)
+- `--region`: Screen region to capture in format 'x,y,width,height'
+- `--display`: Display the captured video while processing
+- `--output`: Directory to save recorded videos
+
+If you don't specify a region, the script will prompt you to enter one.
+
+### Meta Glasses Integration
+
+To monitor content from Meta glasses:
+
+1. Connect your Meta glasses to your phone or computer
+2. Open the Meta glasses viewing app or web interface
+3. Use the `--region` parameter to specify the part of your screen where the Meta glasses feed is displayed
+4. The system will analyze the glasses feed and detect triggers
+
+Example:
+
+```
+python mac_window_monitor.py --region 100,100,800,600 --display
+```
+
+When prompted, enter a detailed description of your PTSD triggers.
 
 ## Output
 
-The system creates a session directory for each run, containing:
-
-- `recordings/`: Brain wave recordings triggered by car detections
-- `analysis/`: Analysis results and logs
-
-Each recording includes:
-- Brain wave data file
-- JSON metadata with trigger information
-
-## Customization
-
-You can customize the trigger objects by modifying the `--triggers` parameter. The default is set to detect cars and related vehicles, but you can adjust it for other PTSD triggers.
+When triggers are detected, the system:
+1. Automatically starts recording the screen region
+2. Continues recording for at least 5 seconds after the last trigger
+3. Saves recordings to MP4, AVI, and JPG formats in the specified output directory
 
 ## Troubleshooting
 
-- **"Cursor device not found"**: Ensure the brain wave recording device is connected and the path is correct.
-- **"Failed to initialize components"**: Check your Google Cloud credentials and permissions.
-- **Streaming issues**: Verify your Meta glasses are properly streaming via RTSP and the URL is correct.
-- **"AIStreamer process terminated unexpectedly"**: Check the AIStreamer build and configuration.
+- **"Error capturing screen area"**: Check if the specified region is valid and visible.
+- **"Gemini API error"**: Verify your API key and internet connection.
+- **"No frames to save"**: Make sure the recording duration is sufficient.
 
 ## License
 
