@@ -4,7 +4,6 @@ aistreamer/
 __pycache__/
 **/__pycache__/
 *.pyc
-*.mp4
 recordings_test/
 recording/
 *.brainwave
