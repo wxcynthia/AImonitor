@@ -2,6 +2,8 @@
 
 This system helps PTSD patients by monitoring screen content in real-time, detecting potential triggers based on user descriptions, and automatically recording the screen when triggers are detected.
 
+[![View on GitHub](https://img.shields.io/badge/GitHub-View%20on%20GitHub-blue?style=for-the-badge&logo=github)](https://github.com/wxcynthia/AImonitor)
+
 ## Overview
 
 The system uses Google's Gemini AI to analyze screen content in real-time and identify potential PTSD triggers based on the user's specific description. When a trigger is detected, it automatically records the screen content.
@@ -83,6 +85,10 @@ When triggers are detected, the system:
 - **"Error capturing screen area"**: Check if the specified region is valid and visible.
 - **"Gemini API error"**: Verify your API key and internet connection.
 - **"No frames to save"**: Make sure the recording duration is sufficient.
+
+## Acknowledgments
+
+Website design is based on the [Nerfies](https://github.com/nerfies/nerfies.github.io) project website.
 
 ## License
 
