@@ -1,0 +1,6 @@
+python-dotenv
+opencv-python
+numpy
+Pillow
+google-generativeai>=0.3.0
+google-cloud-storage==2.9.0

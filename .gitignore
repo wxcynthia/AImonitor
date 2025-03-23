@@ -1,0 +1,14 @@
+.env
+credentials.json
+aistreamer/
+__pycache__/
+**/__pycache__/
+*.pyc
+recordings_test/
+recording/
+*.brainwave
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
